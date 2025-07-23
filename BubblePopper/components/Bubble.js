@@ -42,18 +42,40 @@ export default function Bubble({ x, y, radius }) {
           borderRadius: radius,
         },
       ]}
-    />
+    >
+      {/* Inner highlight to simulate shine */}
+      <View
+        style={[
+          styles.highlight,
+          {
+            width: radius,
+            height: radius,
+            borderRadius: radius / 2,
+          },
+        ]}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   bubble: {
     position: 'absolute',
-    backgroundColor: '#4CAF50',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    backgroundColor: 'rgba(173, 216, 230, 0.3)', // light blue with transparency
+    borderWidth: 1,
+    borderColor: 'rgba(173, 216, 230, 0.6)',
+    shadowColor: '#00BFFF',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.4,
     shadowRadius: 3,
-    elevation: 5,
+    elevation: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  highlight: {
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    position: 'absolute',
+    top: 4,
+    left: 4,
   },
 });

@@ -242,7 +242,7 @@ export default function GameScreen() {
    * Creates bubble at bottom of screen with random X position
    */
   const spawnBubble = () => {
-    const radius = 30;
+    const radius = 20;
     // Ensure bubble stays within screen bounds
     const maxX = screenWidth - (radius * 2);
     const newBubble = {
@@ -337,18 +337,29 @@ export default function GameScreen() {
       if (laserTimeoutRef.current) clearTimeout(laserTimeoutRef.current);
     };
   }, []);
-  
+
+  const barrelLength = 30; // or whatever your barrel height is
+
+  const gunTipX = gunCenterX + barrelLength * Math.cos((gunAngle - 90) * Math.PI / 180);
+  const gunTipY = gunY - barrelLength * Math.sin((gunAngle - 90) * Math.PI / 180);
+
   return (
     <View style={styles.container}>
       {/* Game area */}
       <TouchableWithoutFeedback
         disabled={!gameStarted || gameOver}
         onPressIn={(e) => {
-          handleAim(e); // ← rotates the gun to the touch position
-          fireLaser();  // ← fires the laser
+          handleAim(e); // tap = aim
+          fireLaser();  // tap = fire
         }}
       >
-        <View style={styles.gameArea}>
+        <View
+          style={styles.gameArea}
+          onStartShouldSetResponder={() => true} // allow touch tracking
+          onResponderMove={(e) => {
+            handleAim(e); // finger moves = aim gun
+          }}
+        >
           {/* Bubbles */}
           {bubbles.map(bubble => (
             <Bubble
@@ -375,11 +386,14 @@ export default function GameScreen() {
               style={[
                 styles.angledLaser,
                 {
-                  left: gunCenterX - 2,
-                  bottom: 60, // barrel height + offset
+//                  position: 'absolute',
+                  left: gunTipX + gunWidth /2,
+                  top: gunTipY,
+//                  bottom: 60, // barrel height + offset
                   transform: [
-                    { rotate: `${gunAngle}deg` },
-                    { translateY: -screenHeight } // push upward visually
+                    { translateY: -screenHeight },
+                    { rotate: `${gunAngle - 90}deg` },
+                    { translateY: screenHeight },
                   ]
                 },
               ]}
@@ -406,7 +420,7 @@ export default function GameScreen() {
                   {
                     transform: [
                       { translateY: -15 }, // move origin to center of barrel
-                      { rotate: `${gunAngle}deg` },
+                      { rotate: `${gunAngle - 90}deg` },
                       { translateY: 15 }    // move it back
                     ],
                     transformOrigin: 'bottom center', // iOS only; custom logic needed for Android
@@ -555,15 +569,11 @@ const styles = StyleSheet.create({
   },
   angledLaser: {
     position: 'absolute',
-    width: 4,
-    height: screenHeight,
-    backgroundColor: '#ff0000',
-    shadowColor: '#ff0000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 10,
-    elevation: 20,
-    zIndex: 90,
-  },
+    width: 2,
+    height: screenHeight, // or a constant like 500
+    backgroundColor: 'red',
+    transformOrigin: 'bottom center', // iOS only
+  }
+
 
 });
