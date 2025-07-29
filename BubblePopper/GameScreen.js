@@ -109,6 +109,11 @@ export default function GameScreen() {
   const handleAim = (event) => {
     const { locationX, locationY } = event.nativeEvent;
 
+    if (locationY > screenHeight - 70) {
+        const clampedX = Math.max(0, Math.min(locationX - gunWidth / 2, screenWidth - gunWidth));
+        setGunPosition(clampedX);
+        return;
+    }
     const gunX = gunPosition + gunWidth / 2;
     const gunY = screenHeight - 40; // Adjust based on your gun position
 
@@ -196,7 +201,6 @@ export default function GameScreen() {
       // Check each bubble for collision
       prevBubbles.forEach(bubble => {
         // Calculate bubble center
-        // const bubbleCenterX = bubble.x + bubble.radius;
         const bubbleCenterX = bubble.x + bubble.radius;
         const bubbleCenterY = bubble.y + bubble.radius;
  
