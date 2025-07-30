@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   highlight: {
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
     position: 'absolute',
-    top: 4,
-    left: 4,
+    top: 3,
+    left: 5,
   },
 });

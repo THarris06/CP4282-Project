@@ -33,6 +33,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Bubble from './components/Bubble';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -390,8 +392,7 @@ export default function GameScreen() {
               style={[
                 styles.angledLaser,
                 {
-//                  position: 'absolute',
-                  left: gunTipX + gunWidth /2,
+                  left: gunTipX + gunWidth / 2,
                   top: gunTipY,
                   bottom: 60, // barrel height + offset
                   transform: [
@@ -483,7 +484,7 @@ export default function GameScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000033',
+    backgroundColor: '#003050',
   },
   gameArea: {
     flex: 1,
@@ -584,7 +585,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    height: 80,
+    height: 72,
     backgroundColor: 'rgba(0, 255, 255, 0.2)', // Semi-transparent cyan
     borderTopColor: 'cyan',
     borderTopWidth: 2,
