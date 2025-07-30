@@ -107,18 +107,18 @@ export default function GameScreen() {
    * Currently fires the laser on any tap when game is active
    */
   const handleAim = (event) => {
-    const { locationX, locationY } = event.nativeEvent;
+    const { pageX, pageY } = event.nativeEvent;
 
-    if (locationY > screenHeight - 70) {
-        const clampedX = Math.max(0, Math.min(locationX - gunWidth / 2, screenWidth - gunWidth));
+    if (pageY > screenHeight - 70) {
+        const clampedX = Math.max(0, Math.min(pageX - gunWidth / 2, screenWidth - gunWidth));
         setGunPosition(clampedX);
         return;
     }
     const gunX = gunPosition + gunWidth / 2;
     const gunY = screenHeight - 40; // Adjust based on your gun position
 
-    const dx = locationX - gunX;
-    const dy = locationY - gunY;
+    const dx = pageX - gunX;
+    const dy = pageY - gunY;
 
     const angleRad = Math.atan2(dy, dx);
     const angleDeg = (angleRad * 180) / Math.PI;
@@ -393,7 +393,7 @@ export default function GameScreen() {
 //                  position: 'absolute',
                   left: gunTipX + gunWidth /2,
                   top: gunTipY,
-//                  bottom: 60, // barrel height + offset
+                  bottom: 60, // barrel height + offset
                   transform: [
                     { translateY: -screenHeight },
                     { rotate: `${gunAngle - 90}deg` },
@@ -404,7 +404,8 @@ export default function GameScreen() {
             />
           )}
 
-          
+          <View style={styles.movementBar} />
+
           {/**
            * ============== STUDENT TASK 6 ==============
            * TODO: MODIFY GUN RENDERING
@@ -573,10 +574,21 @@ const styles = StyleSheet.create({
   },
   angledLaser: {
     position: 'absolute',
-    width: 2,
-    height: screenHeight, // or a constant like 500
+    width: 4,
+    height: '100%',
     backgroundColor: 'red',
     transformOrigin: 'bottom center', // iOS only
+    zIndex: 90,
+  },
+  movementBar: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: 80,
+    backgroundColor: 'rgba(0, 255, 255, 0.2)', // Semi-transparent cyan
+    borderTopColor: 'cyan',
+    borderTopWidth: 2,
+
   }
 
 
