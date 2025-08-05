@@ -355,10 +355,18 @@ export default function GameScreen() {
       <TouchableWithoutFeedback
         disabled={!gameStarted || gameOver}
         onPressIn={(e) => {
-          handleAim(e); // tap = aim
-          fireLaser();  // tap = fire
+          const { pageY } = e.nativeEvent;
+
+          // If tap is in the lower movement area, just move gun
+          if (pageY > screenHeight - 70) {
+            handleAim(e); // Just move
+          } else {
+            handleAim(e); // Aim based on tap
+            fireLaser();  // Only fire if tap is outside movement area
+          }
         }}
       >
+
         <View
           style={styles.gameArea}
           onStartShouldSetResponder={() => true} // allow touch tracking
