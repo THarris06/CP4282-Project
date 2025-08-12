@@ -63,7 +63,7 @@ export default function GameScreen() {
    * 3. Ensure the gun stays within screen boundaries
    */
   
-  // Fixed gun position - currently in the middle (MODIFY THIS)
+  // constants for gun
   const gunWidth = 60;
   const [gunPosition, setGunPosition] = useState(screenWidth / 2 - gunWidth / 2);
 
