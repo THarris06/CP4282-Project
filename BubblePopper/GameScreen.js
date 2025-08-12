@@ -201,7 +201,7 @@ export default function GameScreen() {
         const dx = bubbleCenterX - originX;
         const dy = bubbleCenterY - originY;
 
-        // Project bubble center vector onto laser direction
+        // How far along the laser’s direction the bubble is
         const dot = dx * laserDirX + dy * laserDirY;
 
         if (dot > 0) {
@@ -359,7 +359,7 @@ export default function GameScreen() {
 
         <View
           style={styles.gameArea}
-          onStartShouldSetResponder={() => true} // allow touch tracking
+          onStartShouldSetResponder={() => true} // allows touch tracking
           onResponderMove={(e) => {
             handleAim(e);
           }}
