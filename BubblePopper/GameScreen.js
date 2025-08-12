@@ -34,8 +34,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Bubble from './components/Bubble';
 
-
-
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function GameScreen() {
@@ -63,12 +61,6 @@ export default function GameScreen() {
    * 1. Add state to track gun position (both X and Y coordinates)
    * 2. Allow the gun to move based on user input (e.g., touch/drag or buttons)
    * 3. Ensure the gun stays within screen boundaries
-   * 
-   * Example implementation approach:
-   * const [gunPosition, setGunPosition] = useState({ 
-   *   x: screenWidth / 2 - gunWidth / 2, 
-   *   y: screenHeight - 70
-   * });
    */
   
   // Fixed gun position - currently in the middle (MODIFY THIS)
@@ -89,13 +81,6 @@ export default function GameScreen() {
    * 1. Handle touch/drag events to move the gun
    * 2. Update the gun position state
    * 3. Add visual feedback for active controls
-   * 
-   * Example implementation approach:
-   * const handleTouchMove = (event) => {
-   *   const { locationX, locationY } = event.nativeEvent;
-   *   // Apply constraints to keep gun on screen
-   *   setGunPosition({ x: locationX - gunWidth/2, y: locationY });
-   * };
    */
   
   // Refs for game timers and IDs
@@ -106,18 +91,22 @@ export default function GameScreen() {
   
   /**
    * Handle tap to shoot laser
-   * Currently fires the laser on any tap when game is active
+   * If tap is near bottom → moves gun horizontally.
+   * If tap is higher → calculates aiming angle towards tap location.
    */
   const handleAim = (event) => {
     const { pageX, pageY } = event.nativeEvent;
 
+    // Movement zone at bottom of screen
     if (pageY > screenHeight - 70) {
         const clampedX = Math.max(0, Math.min(pageX - gunWidth / 2, screenWidth - gunWidth));
         setGunPosition(clampedX);
         return;
     }
+
+    // Otherwise aim gun towards cursor
     const gunX = gunPosition + gunWidth / 2;
-    const gunY = screenHeight - 40; // Adjust based on your gun position
+    const gunY = screenHeight - 40;
 
     const dx = pageX - gunX;
     const dy = pageY - gunY;
@@ -174,7 +163,9 @@ export default function GameScreen() {
   
   /**
    * Check if laser hits any bubbles
-   * @param {number} laserX - X coordinate of the laser
+   * @param {number} originX - X coordinate of the laser
+   * @param {number} originY - Y coordintae of the laser
+   * @param {number} angleRad - angle of the laser in RADs
    */
   const checkHits = (originX, originY, angleRad) => {
     const laserDirX = Math.cos(angleRad);
@@ -206,8 +197,7 @@ export default function GameScreen() {
         const bubbleCenterX = bubble.x + bubble.radius;
         const bubbleCenterY = bubble.y + bubble.radius;
  
-        // Check if laser x-coordinate is within bubble's horizontal range
-        // const distanceX = Math.abs(bubbleCenterX - laserX);
+        // Vector from gun to bubble center
         const dx = bubbleCenterX - originX;
         const dy = bubbleCenterY - originY;
 
@@ -254,7 +244,7 @@ export default function GameScreen() {
     const newBubble = {
       id: bubbleIdRef.current++,
       x: Math.random() * maxX,
-      y: screenHeight - 100, // Start near bottom of screen
+      y: screenHeight - 100,
       radius: radius,
     };
     
@@ -344,7 +334,7 @@ export default function GameScreen() {
     };
   }, []);
 
-  const barrelLength = 30; // or whatever your barrel height is
+  const barrelLength = 30;
 
   const gunTipX = gunCenterX + barrelLength * Math.cos((gunAngle - 90) * Math.PI / 180);
   const gunTipY = gunY - barrelLength * Math.sin((gunAngle - 90) * Math.PI / 180);
@@ -359,10 +349,10 @@ export default function GameScreen() {
 
           // If tap is in the lower movement area, just move gun
           if (pageY > screenHeight - 70) {
-            handleAim(e); // Just move
+            handleAim(e);
           } else {
-            handleAim(e); // Aim based on tap
-            fireLaser();  // Only fire if tap is outside movement area
+            handleAim(e);
+            fireLaser();
           }
         }}
       >
@@ -371,7 +361,7 @@ export default function GameScreen() {
           style={styles.gameArea}
           onStartShouldSetResponder={() => true} // allow touch tracking
           onResponderMove={(e) => {
-            handleAim(e); // finger moves = aim gun
+            handleAim(e);
           }}
         >
           {/* Bubbles */}
@@ -394,7 +384,7 @@ export default function GameScreen() {
            * 3. Consider adding a cooldown or power meter
            */}
           
-          {/* Laser - currently fixed to fire from center of gun */}
+          {/* Laser */}
           {laserVisible && (
             <View
               style={[
@@ -402,7 +392,7 @@ export default function GameScreen() {
                 {
                   left: gunTipX + gunWidth / 2,
                   top: gunTipY,
-                  bottom: 60, // barrel height + offset
+                  bottom: 60,
                   transform: [
                     { translateY: -screenHeight },
                     { rotate: `${gunAngle - 90}deg` },
@@ -412,7 +402,7 @@ export default function GameScreen() {
               ]}
             />
           )}
-
+          {/* Movement zone */}
           <View style={styles.movementBar} />
 
           {/**
@@ -425,7 +415,7 @@ export default function GameScreen() {
            * 3. Add controls or touch areas for movement
            */}
           
-          {/* Gun - currently static in middle */}
+          {/* Gun */}
           <View style={[styles.gun, { left: gunPosition }]}>
             <View style={styles.gunBase} />
               <View
@@ -437,7 +427,7 @@ export default function GameScreen() {
                       { rotate: `${gunAngle - 90}deg` },
                       { translateY: 15 }    // move it back
                     ],
-                    transformOrigin: 'bottom center', // iOS only; custom logic needed for Android
+                    transformOrigin: 'bottom center',
                   },
                 ]}
               />
