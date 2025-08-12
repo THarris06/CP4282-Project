@@ -33,7 +33,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Bubble from './components/Bubble';
-import LinearGradient from 'react-native-linear-gradient';
+
 
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
